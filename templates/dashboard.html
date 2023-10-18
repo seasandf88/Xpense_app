@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+{% block body %}
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li class="flash-message">{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+  {% endwith %} 
+  <ul>
+<h1>
+  signed in {{ cur_user.name}}
+</h1>
+<a href="/logout" class="btn">logout</a>
+{% endblock %}
