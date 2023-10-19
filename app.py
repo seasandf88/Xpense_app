@@ -1,10 +1,10 @@
 from flask import Flask, render_template, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
-
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import InputRequired, length, ValidationError, EqualTo
+from flask_login import login_user, LoginManager, login_required, logout_user, current_user
+from flask_migrate import Migrate
+# from flask_wtf import FlaskForm
+# from wtforms import StringField, PasswordField, SubmitField
+# from wtforms.validators import InputRequired, length, ValidationError, EqualTo
 from flask_bcrypt import Bcrypt
 import os, datetime
 from helpers import get_quote
@@ -20,94 +20,99 @@ app = Flask(__name__)
 bcrypt = Bcrypt(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 app.config["SECRET_KEY"] = "HELLO"
 
 login_manager = LoginManager()
 login_manager.init_app(app)
 
 
-# Data models
-class User(db.Model, UserMixin):
-    __tablename__ = "user"
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(25), nullable=False)
-    username = db.Column(db.String(25), nullable=False, unique=True)
-    password = db.Column(db.String(80), nullable=False)
-    date_added = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+# Database models
+# class User(db.Model, UserMixin):
+#     __tablename__ = "user"
+#     id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.String(25), nullable=False)
+#     username = db.Column(db.String(25), nullable=False, unique=True)
+#     password = db.Column(db.String(80), nullable=False)
+#     date_added = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
-    budgets = db.relationship("Budget", backref="user")
+#     budgets = db.relationship("Budget", backref="user")
 
-    def __repr__(self):
-        return "<name %r>" % self.name
-
-
-class Budget(db.Model, UserMixin):
-    __tablename__ = "budget"
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(25), nullable=False)
-    amount = db.Column(db.Float, nullable=False, unique=True)
-    color = db.Column(db.String(9), nullable=False, unique=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-
-    expenses = db.relationship("Expense", backref="budget")
-
-    def __repr__(self):
-        return "<name %r>" % self.name
+#     def __repr__(self):
+#         return "<name %r>" % self.name
 
 
-class Expense(db.Model, UserMixin):
-    __tablename__ = "expense"
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(25), nullable=False)
-    amount = db.Column(db.Float, nullable=False, unique=True)
-    budget_id = db.Column(db.Integer, db.ForeignKey("budget.id"))
-    # color = db.Column(db.Integer, db.ForeignKey("budget.color"))
+# class Budget(db.Model, UserMixin):
+#     __tablename__ = "budget"
+#     id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.String(25), nullable=False)
+#     amount = db.Column(db.Float, nullable=False, unique=True)
+#     color = db.Column(db.String(9), nullable=False, unique=True)
+#     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
-    def __repr__(self):
-        return "<name %r>" % self.name
+#     expenses = db.relationship("Expense", backref="budget")
+
+#     def __repr__(self):
+#         return "<name %r>" % self.name
+
+
+# class Expense(db.Model, UserMixin):
+#     __tablename__ = "expense"
+#     id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.String(25), nullable=False)
+#     amount = db.Column(db.Float, nullable=False, unique=True)
+#     budget_id = db.Column(db.Integer, db.ForeignKey("budget.id"))
+
+#     def __repr__(self):
+#         return "<name %r>" % self.name
+
+
+from models import User, Budget, Expense
+
+from forms import LoginForm, SignupForm
 
 
 # Forms and validators:
-class LoginForm(FlaskForm):
-    username = StringField(
-        validators=[InputRequired(), length(min=3, max=20)],
-        render_kw={"placeholder": "Username"},
-    )
-    password = PasswordField(
-        validators=[InputRequired(), length(min=4, max=20)],
-        render_kw={"placeholder": "Password"},
-    )
-    submit = SubmitField("Login")
+# class LoginForm(FlaskForm):
+#     username = StringField(
+#         validators=[InputRequired(), length(min=3, max=20)],
+#         render_kw={"placeholder": "Username"},
+#     )
+#     password = PasswordField(
+#         validators=[InputRequired(), length(min=4, max=20)],
+#         render_kw={"placeholder": "Password"},
+#     )
+#     submit = SubmitField("Login")
 
-class SignupForm(FlaskForm):
-    name = StringField(
-        validators=[InputRequired(), length(min=3, max=20)],
-        render_kw={"placeholder": "e.g. John"},
-    )
-    username = StringField(
-        validators=[InputRequired(), length(min=3, max=20)],
-        render_kw={"placeholder": "Username"},
-    )
-    password = PasswordField(
-        validators=[
-            InputRequired(),
-            length(min=4, max=20),
-            EqualTo("password_confirm", message="Passwords must match"),
-        ],
-        render_kw={"placeholder": "Password"},
-    )
-    password_confirm = PasswordField(
-        validators=[InputRequired(), length(min=4, max=20)],
-        render_kw={"placeholder": "Password"},
-    )
-    submit = SubmitField("Signup")
+# class SignupForm(FlaskForm):
+#     name = StringField(
+#         validators=[InputRequired(), length(min=3, max=20)],
+#         render_kw={"placeholder": "e.g. John"},
+#     )
+#     username = StringField(
+#         validators=[InputRequired(), length(min=3, max=20)],
+#         render_kw={"placeholder": "Username"},
+#     )
+#     password = PasswordField(
+#         validators=[
+#             InputRequired(),
+#             length(min=4, max=20),
+#             EqualTo("password_confirm", message="Passwords must match"),
+#         ],
+#         render_kw={"placeholder": "Password"},
+#     )
+#     password_confirm = PasswordField(
+#         validators=[InputRequired(), length(min=4, max=20)],
+#         render_kw={"placeholder": "Password"},
+#     )
+#     submit = SubmitField("Signup")
 
-    # def check_username(self, username):
-    #     existing_user = User.query.filter_by(username=username.data).first()
-    #     if existing_user:
-    #         raise ValidationError(
-    #             "The username already exists, please choose another one."
-    #         )
+#     def check_username(self, username):
+#         existing_user = User.query.filter_by(username=username.data).first()
+#         if existing_user:
+#             raise ValidationError(
+#                 "The username already exists, please choose another one."
+#             )
 
 
 # Routes:
@@ -151,6 +156,7 @@ def signup():
         login_user(new_user)
         flash("Signup successful")
         return redirect("/dashboard")
+    return redirect("/")
     
 
 @app.route("/dashboard")
@@ -163,5 +169,5 @@ def dashboard():
 @login_required
 def logout():
     logout_user()
-    flash("Logged out successfully")
+    flash("Logout successful")
     return redirect("/")

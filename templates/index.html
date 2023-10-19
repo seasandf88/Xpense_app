@@ -31,12 +31,24 @@
   
   <div class="forms-container">
 
-    <form action="/login" method="post" class="form active-form" novalidate>
+    <form action="/login" method="post" class="form active-form">
+      <h3>Login to <span class="highlight">X</span>pense</h3>
+
       {{ login_form.hidden_tag() }}
-      {{ login_form.username.label}}
-      {{ login_form.username(size=32, class="input") }}
-      {{ login_form.password.label}}
-      {{ login_form.password(size=32, class="input") }}
+      <div class="form-control">
+        {{ login_form.username.label}}
+        {{ login_form.username(size=32, class="input") }}
+        {% for error in login_form.username.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+      </div>
+      <div class="form-control">
+        {{ login_form.password.label}}
+        {{ login_form.password(size=32, class="input") }}
+        {% for error in login_form.password.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+      </div>
       <div class="form-buttons">
         {{ login_form.submit(class="btn btn-primary") }}
         <input
@@ -47,18 +59,41 @@
         />
       </div>
     </form>
-    <form action="/signup" method="post" class="form" novalidate>
+    <form action="/signup" method="post" class="form">
+      <h3>Signup to <span class="highlight">X</span>pense</h3>
+
       {{ signup_form.hidden_tag() }}
-      {{ signup_form.name.label}}
-      {{ signup_form.name(size=32, class="input") }}
-      {{ signup_form.username.label}}
-      {{ signup_form.username(size=32, class="input") }}
-      {{ signup_form.password.label}}
-      {{ signup_form.password(size=32, class="input") }}
-      {{ signup_form.password_confirm.label}}
-      {{ signup_form.password_confirm(size=32, class="input") }}
+      <div class="form-control">
+        {{ signup_form.name.label}}
+        {{ signup_form.name(size=32, class="input") }}
+        {% for error in signup_form.name.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+        
+      </div>
+      <div class="form-control">
+        {{ signup_form.username.label}}
+        {{ signup_form.username(size=32, class="input") }}
+        {% for error in signup_form.username.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+      </div>
+      <div class="form-control">
+        {{ signup_form.password.label}}
+        {{ signup_form.password(size=32, class="input") }}
+        {% for error in signup_form.password.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+      </div>
+      <div class="form-control">
+        {{ signup_form.password_confirm.label}}
+        {{ signup_form.password_confirm(size=32, class="input") }}
+        {% for error in signup_form.password.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+      </div>
       <div class="form-buttons">
-        {{ login_form.submit(class="btn btn-primary") }}
+        {{ signup_form.submit(class="btn btn-primary") }}
         <input
           type="button"
           value="cancel"
