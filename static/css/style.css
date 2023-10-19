@@ -223,10 +223,8 @@ form h3 {
   height: 2rem;
   background-color: #2fb64e;
   border-radius: 5px;
-  /* border: 1px solid var(--text-color-light); */
   list-style: none;
   top: 1rem;
-  right: 10vw;
   display: block;
   margin: auto;
   color: white;
@@ -234,24 +232,26 @@ form h3 {
   font-size: 1rem;
   animation: fade-in 3s;
   opacity: 0;
+  pointer-events: none;
 }
+
 
 @keyframes fade-in {
   0% {
     opacity: 0;
-    right: 5vw;
+    right: 1vw;
   }
   15% {
     opacity: 1;
-    right: 10vw;
+    right: 5vw;
   }
   85% {
     opacity: 1;
-    right: 10vw;
+    right: 5vw;
   }
   100% {
     opacity: 0;
-    right: 5vw;
+    right: 1vw;
   }
 }
 

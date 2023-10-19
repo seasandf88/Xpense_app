@@ -9,11 +9,11 @@
 <!-- Body block -->
 {% block body %}
 <div class="container dashboard">
-  <h1 class="title">Welcome back, <span class="highlight">{{ cur_user.name }}</span></h1>
+  <h1 class="title">Welcome back, <span class="highlight">{{ current_user.name }}</span></h1>
   <div class="create">
     <div class="card budget">
       <h3 class="sub-subtitle">Create Budget</h3>
-      <form action="/new-budget" novalidate method="POST">
+      <form action="/new-budget" method="post">
         {{ budget_form.hidden_tag() }}
         <div class="form-control">
           {{ budget_form.name.label}}
@@ -32,9 +32,12 @@
         {{ budget_form.submit(class="btn btn-small") }}
       </form>
     </div>
+    {% if current_user.budgets %}
+  
     <div class="card expense">
       <h3 class="sub-subtitle">Add Expense</h3>
-      <form action="/new-expense">
+      <form action="/new-expense" method="post">
+        {{ budget_form.hidden_tag() }}
         <div class="expense-wrapper">
           <div class="form-control">
             {{ expense_form.name.label}}
@@ -46,12 +49,21 @@
           </div>
         </div>
         <div class="form-control">
-          {{ expense_form.category.label}}
-          {{ expense_form.category(class="input select")}}
+          <label for="category">Category</label>
+          <select name="category" id="category" class="input select">
+            {% with budgets = current_user.budgets %}
+              <option value="" disabled selected>Select budget</option>
+                {% for budget in budgets %}
+                  <option value="{{ budget.id }}">{{ budget.name }}</option>
+                {% endfor %}
+            {% endwith %}
+        </select>
         </div>
         {{ expense_form.submit(class="btn btn-small") }}
       </form>
     </div>
+    {% endif %}
+
     
   </div>
   <h2 class="subtitle">Budgets</h2>
@@ -66,5 +78,8 @@
       </tr>
     </thead>
   </table>
+  <ul>
+    {% for current_user
+  </ul>
 </div>
 {% endblock %}

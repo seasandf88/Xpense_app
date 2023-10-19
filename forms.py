@@ -55,15 +55,12 @@ class BudgetForm(FlaskForm):
 class ExpenseForm(FlaskForm):
     name = StringField(
         "Expense Name",
-        # validators=[InputRequired(), length(min=3, max=20)],
+        validators=[InputRequired(), length(min=3, max=20)],
         render_kw={"placeholder": "e.g. Bananas"},
     )
     amount = FloatField(
         "Amount",
-        # validators=[InputRequired()],
+        validators=[InputRequired()],
         render_kw={"placeholder": "e.g. 10"},
-    )
-    category = SelectField(
-        "Select Category"
     )
     submit = SubmitField("Add")

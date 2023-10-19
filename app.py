@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, flash
+from flask import Flask, render_template, redirect, flash, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import login_user, LoginManager, login_required, logout_user, current_user
 from flask_migrate import Migrate
@@ -162,12 +162,10 @@ def signup():
 @app.route("/dashboard")
 @login_required
 def dashboard():
-    choices = ["Hello", "world", "test"]
     budget_form = BudgetForm()
     expense_form = ExpenseForm()
-    expense_form.category.choices = [(g) for g in choices]
-    
-    return render_template("dashboard.html", cur_user=current_user, budget_form=budget_form, expense_form=expense_form)
+    user_expenses = Expense.query.filter_by()
+    return render_template("dashboard.html", current_user=current_user, budget_form=budget_form, expense_form=expense_form)
 
     
 @app.route("/logout")
@@ -191,4 +189,21 @@ def new_budget():
         flash("Budget Created")
         return redirect("/dashboard")
     flash("Something went wrong")
+    return redirect("/dashboard")
+    
+@app.route("/new-expense", methods=["POST"])
+@login_required
+def new_expense():
+    form = ExpenseForm()
+    budget_id = int(request.form["category"])
+    budget = Budget.query.get(budget_id)
+    if form.validate_on_submit():
+        new_expense = Expense(name=form.name.data, amount=form.amount.data)
+        db.session.add(new_expense)
+        budget.expenses.append(new_expense)
+        db.session.commit()
+        flash("Expense Created")
+        return redirect("/dashboard")
+    for error in form.errors:
+        flash(error)
     return redirect("/dashboard")

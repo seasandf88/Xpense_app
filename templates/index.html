@@ -31,16 +31,10 @@
       <div class="form-control">
         {{ login_form.username.label}}
         {{ login_form.username(size=32, class="input") }}
-        {% for error in login_form.username.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
       </div>
       <div class="form-control">
         {{ login_form.password.label}}
         {{ login_form.password(size=32, class="input") }}
-        {% for error in login_form.password.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
       </div>
       <div class="form-buttons">
         {{ login_form.submit(class="btn btn-primary") }}
@@ -59,31 +53,18 @@
       <div class="form-control">
         {{ signup_form.name.label}}
         {{ signup_form.name(size=32, class="input") }}
-        {% for error in signup_form.name.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-        
       </div>
       <div class="form-control">
         {{ signup_form.username.label}}
         {{ signup_form.username(size=32, class="input") }}
-        {% for error in signup_form.username.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
       </div>
       <div class="form-control">
         {{ signup_form.password.label}}
         {{ signup_form.password(size=32, class="input") }}
-        {% for error in signup_form.password.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
       </div>
       <div class="form-control">
         {{ signup_form.password_confirm.label}}
         {{ signup_form.password_confirm(size=32, class="input") }}
-        {% for error in signup_form.password.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
       </div>
       <div class="form-buttons">
         {{ signup_form.submit(class="btn btn-primary") }}
