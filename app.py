@@ -6,7 +6,7 @@ from flask_migrate import Migrate
 # from wtforms import StringField, PasswordField, SubmitField
 # from wtforms.validators import InputRequired, length, ValidationError, EqualTo
 from flask_bcrypt import Bcrypt
-import os, datetime
+import os, datetime, random
 from helpers import get_quote
 
 
@@ -69,7 +69,7 @@ login_manager.init_app(app)
 
 from models import User, Budget, Expense
 
-from forms import LoginForm, SignupForm
+from forms import LoginForm, SignupForm, BudgetForm, ExpenseForm
 
 
 # Forms and validators:
@@ -162,7 +162,12 @@ def signup():
 @app.route("/dashboard")
 @login_required
 def dashboard():
-    return render_template("dashboard.html", cur_user=current_user)
+    choices = ["Hello", "world", "test"]
+    budget_form = BudgetForm()
+    expense_form = ExpenseForm()
+    expense_form.category.choices = [(g) for g in choices]
+    
+    return render_template("dashboard.html", cur_user=current_user, budget_form=budget_form, expense_form=expense_form)
 
     
 @app.route("/logout")
@@ -171,3 +176,19 @@ def logout():
     logout_user()
     flash("Logout successful")
     return redirect("/")
+
+@app.route("/new-budget", methods=["POST"])
+@login_required
+def new_budget():
+    form = BudgetForm()
+    rand = random.randint(1, 7)
+    color = "accent-" + str(rand)
+    if form.validate_on_submit():
+        new_budget = Budget(name=form.name.data, amount=form.amount.data, color=color)
+        db.session.add(new_budget)
+        current_user.budgets.append(new_budget)
+        db.session.commit()
+        flash("Budget Created")
+        return redirect("/dashboard")
+    flash("Something went wrong")
+    return redirect("/dashboard")

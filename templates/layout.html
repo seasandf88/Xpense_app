@@ -15,10 +15,24 @@
     <title>{% block title %}{% endblock %}</title>
   </head>
   <body>
+    
+    <!-- Flask messages -->
+    {% with messages = get_flashed_messages() %}
+    <!---->
+    {% if messages %}
+    <ul class="flashes">
+      {% for message in messages %}
+      <li class="flash-message">{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %} {% endwith %}
+    <!---->
+
     <header>
       <div class="logo">
         <h1><span class="highlight">X</span>spense</h1>
       </div>
+      {% block header %}{% endblock %}
     </header>
     {% block body %}{% endblock %}
     <footer>

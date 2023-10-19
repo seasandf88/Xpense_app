@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, FloatField, SelectField
 from wtforms.validators import InputRequired, length, ValidationError, EqualTo
 
 
@@ -38,9 +38,32 @@ class SignupForm(FlaskForm):
     )
     submit = SubmitField("Signup")
 
-    def check_username(self, username):
-        existing_user = User.query.filter_by(username=username.data).first()
-        if existing_user:
-            raise ValidationError(
-                "The username already exists, please choose another one."
-            )
+class BudgetForm(FlaskForm):
+    name = StringField(
+        "Budget Name",
+        validators=[InputRequired(), length(min=3, max=20)],
+        render_kw={"placeholder": "e.g. Groceries"},
+    )
+    amount = FloatField(
+        "Amount",
+        validators=[InputRequired()],
+        render_kw={"placeholder": "e.g. 100"},
+    )
+    submit = SubmitField("Create")
+
+    
+class ExpenseForm(FlaskForm):
+    name = StringField(
+        "Expense Name",
+        # validators=[InputRequired(), length(min=3, max=20)],
+        render_kw={"placeholder": "e.g. Bananas"},
+    )
+    amount = FloatField(
+        "Amount",
+        # validators=[InputRequired()],
+        render_kw={"placeholder": "e.g. 10"},
+    )
+    category = SelectField(
+        "Select Category"
+    )
+    submit = SubmitField("Add")

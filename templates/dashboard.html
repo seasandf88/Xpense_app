@@ -1,17 +1,70 @@
 {% extends 'layout.html' %}
-{% block body %}
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <ul class=flashes>
-    {% for message in messages %}
-      <li class="flash-message">{{ message }}</li>
-    {% endfor %}
-    </ul>
-  {% endif %}
-  {% endwith %} 
-  <ul>
-<h1>
-  signed in {{ cur_user.name}}
-</h1>
+
+
+<!-- Head block-->
+{% block header %}
 <a href="/logout" class="btn">logout</a>
+{% endblock %}
+
+<!-- Body block -->
+{% block body %}
+<div class="container dashboard">
+  <h1 class="title">Welcome back, <span class="highlight">{{ cur_user.name }}</span></h1>
+  <div class="create">
+    <div class="card budget">
+      <h3 class="sub-subtitle">Create Budget</h3>
+      <form action="/new-budget" novalidate method="POST">
+        {{ budget_form.hidden_tag() }}
+        <div class="form-control">
+          {{ budget_form.name.label}}
+          {{ budget_form.name(class="input")}}
+          {% for error in budget_form.name.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+          {% endfor %}
+        </div>
+        <div class="form-control">
+          {{ budget_form.amount.label}}
+          {{ budget_form.amount(class="input")}}
+          {% for error in budget_form.amount.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+          {% endfor %}
+        </div>
+        {{ budget_form.submit(class="btn btn-small") }}
+      </form>
+    </div>
+    <div class="card expense">
+      <h3 class="sub-subtitle">Add Expense</h3>
+      <form action="/new-expense">
+        <div class="expense-wrapper">
+          <div class="form-control">
+            {{ expense_form.name.label}}
+            {{ expense_form.name(class="input")}}
+          </div>
+          <div class="form-control">
+            {{ expense_form.amount.label}}
+            {{ expense_form.amount(class="input")}}
+          </div>
+        </div>
+        <div class="form-control">
+          {{ expense_form.category.label}}
+          {{ expense_form.category(class="input select")}}
+        </div>
+        {{ expense_form.submit(class="btn btn-small") }}
+      </form>
+    </div>
+    
+  </div>
+  <h2 class="subtitle">Budgets</h2>
+  <div class="budgets-container">
+    <div class="card"></div>
+  </div>
+  <h2 class="subtitle">Expenses</h2>
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+      </tr>
+    </thead>
+  </table>
+</div>
 {% endblock %}

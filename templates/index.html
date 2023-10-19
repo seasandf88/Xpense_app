@@ -1,17 +1,10 @@
-{% extends 'layout.html' %}{% block body %}
+{% extends 'layout.html' %}
+
+<!--Body block-->
+{% block body %}
 <div class="container homepage">
-  {% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <ul class=flashes>
-    {% for message in messages %}
-      <li class="flash-message">{{ message }}</li>
-    {% endfor %}
-    </ul>
-  {% endif %}
-  {% endwith %} 
-  <ul>
   <div class="home-text">
-    <h1 class="title">
+    <h1 class="home-title">
       Take Charge<br />of<span class="highlight">&nbsp;Your Finances</span>
     </h1>
     <p class="quote">
@@ -163,4 +156,5 @@
   </div>
 
 </dialog>
+
 {% endblock %}

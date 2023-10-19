@@ -35,6 +35,7 @@ body {
   flex-direction: column;
   justify-content: space-between;
   min-height: 100vh;
+  background-color: #f0f1f5;
 }
 
 header {
@@ -43,6 +44,8 @@ header {
   margin: 0 auto;
   height: 4rem;
   padding: 1rem 0;
+  display: flex;
+  justify-content: space-between;
 }
 
 footer {
@@ -56,12 +59,13 @@ footer {
   max-width: 960px;
   margin: 0 auto;
   flex-grow: 1;
+  padding: 1rem 0;
 }
 
 .btn {
   text-transform: uppercase;
   padding: 0.625rem 1.25rem;
-  font-size: 1.3vw;
+  font-size: 1.2vw;
   width: max-content;
   color: white;
   font-weight: 700;
@@ -69,6 +73,7 @@ footer {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .btn-primary {
@@ -77,6 +82,11 @@ footer {
 
 .btn-secondary {
   background-color: #555;
+}
+
+.btn-small {
+  padding: 0.5rem 1rem;
+  font-size: 1vw;
 }
 
 .container.homepage {
@@ -94,7 +104,7 @@ footer {
   gap: 1rem;
 }
 
-.home-text .title {
+.home-title {
   font-size: 4rem;
   font-size: 6vw;
   font-weight: 900;
@@ -180,7 +190,7 @@ form h3 {
   gap: 1rem;
 }
 
-#login-dialog .input {
+.input {
   width: 100%;
   height: 2em;
   padding: 1em 0.5em;
@@ -191,6 +201,13 @@ form h3 {
   margin-top: 0.25rem;
   color: var(--text-color-light);
 }
+
+.input:focus {
+  outline: none;
+  border: 2px solid var(--secondary-color);
+
+}
+
 
 .form-buttons {
   display: flex;
@@ -236,4 +253,79 @@ form h3 {
     opacity: 0;
     right: 5vw;
   }
+}
+
+/* Dashboard */
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5em;
+}
+
+.subtitle {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5em;
+}
+
+.sub-subtitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5em;
+}
+
+.create {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.create .input {
+  width: 100%;
+  padding: 1em 0.5em;
+  border-radius: 5px;
+  background-color: white;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  color: var(--text-color-light);
+}
+
+.card {
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  position: relative;
+  border: 3px solid white;
+}
+
+.create .card::before {
+  content: "";
+  position: absolute;
+  inset: 0.25rem;
+  border-radius: 10px;
+  border: 2px dashed var(--light-color);
+  background-color: transparent;
+  pointer-events: none;
+}
+
+.create form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.expense-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-control {
+  display: flex;
+  flex-direction: column;
+}
+
+.input.select {
+  padding: 0 0.25em;
+  height: 2.25em;
 }
