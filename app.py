@@ -23,96 +23,13 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 app.config["SECRET_KEY"] = "HELLO"
 
-login_manager = LoginManager()
-login_manager.init_app(app)
+login_manager = LoginManager(app)
+# login_manager.init_app(app)
 
 
-# Database models
-# class User(db.Model, UserMixin):
-#     __tablename__ = "user"
-#     id = db.Column(db.Integer, primary_key=True)
-#     name = db.Column(db.String(25), nullable=False)
-#     username = db.Column(db.String(25), nullable=False, unique=True)
-#     password = db.Column(db.String(80), nullable=False)
-#     date_added = db.Column(db.DateTime, default=datetime.datetime.utcnow)
-
-#     budgets = db.relationship("Budget", backref="user")
-
-#     def __repr__(self):
-#         return "<name %r>" % self.name
-
-
-# class Budget(db.Model, UserMixin):
-#     __tablename__ = "budget"
-#     id = db.Column(db.Integer, primary_key=True)
-#     name = db.Column(db.String(25), nullable=False)
-#     amount = db.Column(db.Float, nullable=False, unique=True)
-#     color = db.Column(db.String(9), nullable=False, unique=True)
-#     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-
-#     expenses = db.relationship("Expense", backref="budget")
-
-#     def __repr__(self):
-#         return "<name %r>" % self.name
-
-
-# class Expense(db.Model, UserMixin):
-#     __tablename__ = "expense"
-#     id = db.Column(db.Integer, primary_key=True)
-#     name = db.Column(db.String(25), nullable=False)
-#     amount = db.Column(db.Float, nullable=False, unique=True)
-#     budget_id = db.Column(db.Integer, db.ForeignKey("budget.id"))
-
-#     def __repr__(self):
-#         return "<name %r>" % self.name
-
-
+# Importing Forms and Models
 from models import User, Budget, Expense
-
 from forms import LoginForm, SignupForm, BudgetForm, ExpenseForm
-
-
-# Forms and validators:
-# class LoginForm(FlaskForm):
-#     username = StringField(
-#         validators=[InputRequired(), length(min=3, max=20)],
-#         render_kw={"placeholder": "Username"},
-#     )
-#     password = PasswordField(
-#         validators=[InputRequired(), length(min=4, max=20)],
-#         render_kw={"placeholder": "Password"},
-#     )
-#     submit = SubmitField("Login")
-
-# class SignupForm(FlaskForm):
-#     name = StringField(
-#         validators=[InputRequired(), length(min=3, max=20)],
-#         render_kw={"placeholder": "e.g. John"},
-#     )
-#     username = StringField(
-#         validators=[InputRequired(), length(min=3, max=20)],
-#         render_kw={"placeholder": "Username"},
-#     )
-#     password = PasswordField(
-#         validators=[
-#             InputRequired(),
-#             length(min=4, max=20),
-#             EqualTo("password_confirm", message="Passwords must match"),
-#         ],
-#         render_kw={"placeholder": "Password"},
-#     )
-#     password_confirm = PasswordField(
-#         validators=[InputRequired(), length(min=4, max=20)],
-#         render_kw={"placeholder": "Password"},
-#     )
-#     submit = SubmitField("Signup")
-
-#     def check_username(self, username):
-#         existing_user = User.query.filter_by(username=username.data).first()
-#         if existing_user:
-#             raise ValidationError(
-#                 "The username already exists, please choose another one."
-#             )
 
 
 # Routes:
@@ -127,6 +44,8 @@ def unauthorized():
 
 @app.route("/")
 def index():
+    if current_user.is_authenticated:
+        return redirect('/dashboard')
     quote = get_quote()
     login_form = LoginForm()
     signup_form = SignupForm()
@@ -150,7 +69,7 @@ def signup():
     form = SignupForm()
     if form.validate_on_submit():
         hashed_pw = bcrypt.generate_password_hash(form.password.data)
-        new_user = User(name=form.name.data, username=form.username.data, password=hashed_pw)
+        new_user = User(name=form.name.data.capitalize(), username=form.username.data, password=hashed_pw)
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user)
@@ -165,7 +84,16 @@ def dashboard():
     budget_form = BudgetForm()
     expense_form = ExpenseForm()
     user_expenses = Expense.query.filter_by()
-    return render_template("dashboard.html", current_user=current_user, budget_form=budget_form, expense_form=expense_form)
+    users = User.query.all()
+    user = User.query.get(1)
+    return render_template(
+        "dashboard.html",
+        current_user=current_user,
+        budget_form=budget_form,
+        expense_form=expense_form,
+        users=users,
+        user=user
+        )
 
     
 @app.route("/logout")
@@ -182,9 +110,8 @@ def new_budget():
     rand = random.randint(1, 7)
     color = "accent-" + str(rand)
     if form.validate_on_submit():
-        new_budget = Budget(name=form.name.data, amount=form.amount.data, color=color)
+        new_budget = Budget(name=form.name.data.capitalize(), amount=form.amount.data, color=color, user=current_user)
         db.session.add(new_budget)
-        current_user.budgets.append(new_budget)
         db.session.commit()
         flash("Budget Created")
         return redirect("/dashboard")
@@ -195,15 +122,24 @@ def new_budget():
 @login_required
 def new_expense():
     form = ExpenseForm()
-    budget_id = int(request.form["category"])
+    budget_id = int(request.form["budget"])
     budget = Budget.query.get(budget_id)
+    spent = budget.spent
     if form.validate_on_submit():
-        new_expense = Expense(name=form.name.data, amount=form.amount.data)
+        if spent + form.amount.data > budget.amount:
+            flash("Insufficient budget")
+            return redirect("/dashboard")
+        new_expense = Expense(name=form.name.data.capitalize(), amount=form.amount.data, budget=budget)
+        budget.spent += new_expense.amount
         db.session.add(new_expense)
-        budget.expenses.append(new_expense)
+        db.session.add(budget)
         db.session.commit()
         flash("Expense Created")
         return redirect("/dashboard")
-    for error in form.errors:
-        flash(error)
     return redirect("/dashboard")
+
+
+# Creates shell context
+@app.shell_context_processor
+def make_shell_context():
+    return {'db': db, 'User': User, 'Budget': Budget, 'Expense': Expense}

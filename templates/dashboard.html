@@ -13,20 +13,20 @@
   <div class="create">
     <div class="card budget">
       <h3 class="sub-subtitle">Create Budget</h3>
-      <form action="/new-budget" method="post">
+      <form action="/new-budget" method="post" novalidate>
         {{ budget_form.hidden_tag() }}
         <div class="form-control">
           {{ budget_form.name.label}}
           {{ budget_form.name(class="input")}}
           {% for error in budget_form.name.errors %}
-            <span style="color: red;">[{{ error }}]</span>
+            <p><span style="color: red;">[{{ error }}]</span></p>
           {% endfor %}
         </div>
         <div class="form-control">
           {{ budget_form.amount.label}}
           {{ budget_form.amount(class="input")}}
           {% for error in budget_form.amount.errors %}
-            <span style="color: red;">[{{ error }}]</span>
+            <p><span style="color: red;">[{{ error }}]</span></p>
           {% endfor %}
         </div>
         {{ budget_form.submit(class="btn btn-small") }}
@@ -37,7 +37,7 @@
     <div class="card expense">
       <h3 class="sub-subtitle">Add Expense</h3>
       <form action="/new-expense" method="post">
-        {{ budget_form.hidden_tag() }}
+        {{ expense_form.hidden_tag() }}
         <div class="expense-wrapper">
           <div class="form-control">
             {{ expense_form.name.label}}
@@ -50,7 +50,7 @@
         </div>
         <div class="form-control">
           <label for="category">Category</label>
-          <select name="category" id="category" class="input select">
+          <select name="budget" id="budget" class="input select" required>
             {% with budgets = current_user.budgets %}
               <option value="" disabled selected>Select budget</option>
                 {% for budget in budgets %}
@@ -64,22 +64,48 @@
     </div>
     {% endif %}
 
-    
   </div>
   <h2 class="subtitle">Budgets</h2>
   <div class="budgets-container">
-    <div class="card"></div>
+    {% for budget in current_user.budgets %}
+    <div class="budget-card {{ budget.color }}">
+      <div class="row">
+        <h3 class="sub-subtitle row-title {{ budget.color }}">{{ budget.name }}</h3>
+        <p class="amount {{ budget.color }}">{{ budget.amount }} Budgeted</p>
+      </div>
+      <div class="row {{ budget.color }}">
+        <progress max="{{ budget.amount }}" value="{{ budget.spent }}"></progress>
+      </div>
+      <div class="row progress-text">
+        <small>{{ budget.spent }} spent</small>
+        <small>{{ budget.amount - budget.spent }} remaining</small>
+      </div>
+      <div class="row">
+        <a href="#"><button class="btn btn-small {{ budget.color }}">details</button></a>
+      </div>
+    </div>
+    {% endfor %}
   </div>
   <h2 class="subtitle">Expenses</h2>
   <table>
-    <thead>
+    <table>
       <tr>
-        <th></th>
+        <th>Name</th>
+        <th>Amount</th>
+        <th>Date Added</th>
+        <th>Budget</th>
       </tr>
-    </thead>
-  </table>
-  <ul>
-    {% for current_user
-  </ul>
+      {% for budget in current_user.budgets %}
+        {% for expense in budget.expenses %}
+          <tr>
+            <td>{{ expense.name }}</td>
+            <td>{{ expense.amount }}</td>
+            <td>{{ expense.date_added }}</td>
+            <td>{{ budget.name }}</td>
+          </tr>
+        {% endfor %}
+      {% endfor %}
+
+    </table>
 </div>
 {% endblock %}
