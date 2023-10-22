@@ -10,7 +10,8 @@
 {% block body %}
 <div class="container dashboard">
   <h1 class="title"><span class="{{ budget.color }}">{{ budget.name }}</span> Overview</h1>
-  <div class="budgets-container">
+  <div class="create">
+
     <div class="budget-card {{ budget.color }}">
       <div class="row">
         <h3 class="sub-subtitle row-title {{ budget.color }}">{{ budget.name }}</h3>
@@ -27,8 +28,31 @@
         <a href="/delete-budget/{{ budget.name }}"><button class="btn btn-small {{ budget.color }}">Delete Budget</button></a>
       </div>
     </div>
-  </div>
 
+    <div class="card budget">
+      <form action="/edit-budget" method="post" novalidate>
+        <!-- <h3 class="sub-subtitle">Edit Budget</h3> -->
+
+        {{ budget_form.hidden_tag() }}
+        <input type="text" name="budget_id" id="" value="{{ budget.id }}" hidden>
+        <div class="form-control">
+          {{ budget_form.name.label}}
+          {{ budget_form.name(class="input")}}
+          {% for error in budget_form.name.errors %}
+          <span class="form-error">{{ error }}</span>
+          {% endfor %}
+        </div>
+        <div class="form-control">
+          {{ budget_form.amount.label}}
+          {{ budget_form.amount(class="input")}}
+          {% for error in budget_form.amount.errors %}
+          <span class="form-error">{{ error }}</span>
+          {% endfor %}
+        </div>
+        <button class="btn btn-small">edit budget</button>
+      </form>
+    </div>
+  </div>
   {% if budget.expenses %}
   <h2 class="subtitle">Expenses</h2>
   <table>

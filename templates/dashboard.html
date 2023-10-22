@@ -13,15 +13,21 @@
   <div class="create">
     <div class="card budget">
       <h3 class="sub-subtitle">Create Budget</h3>
-      <form action="/new-budget" method="post">
+      <form action="/new-budget" method="post" novalidate>
         {{ budget_form.hidden_tag() }}
         <div class="form-control">
           {{ budget_form.name.label}}
           {{ budget_form.name(class="input")}}
+          {% for error in budget_form.name.errors %}
+          <span class="form-error">{{ error }}</span>
+          {% endfor %}
         </div>
         <div class="form-control">
           {{ budget_form.amount.label}}
           {{ budget_form.amount(class="input")}}
+          {% for error in budget_form.amount.errors %}
+          <span class="form-error">{{ error }}</span>
+          {% endfor %}
         </div>
         {{ budget_form.submit(class="btn btn-small") }}
       </form>
@@ -34,12 +40,12 @@
         {{ expense_form.hidden_tag() }}
         <div class="expense-wrapper">
           <div class="form-control">
-            {{ expense_form.name.label}}
-            {{ expense_form.name(class="input")}}
+            {{ expense_form.expense_name.label}}
+            {{ expense_form.expense_name(class="input")}}
           </div>
           <div class="form-control">
-            {{ expense_form.amount.label}}
-            {{ expense_form.amount(class="input")}}
+            {{ expense_form.expense_amount.label}}
+            {{ expense_form.expense_amount(class="input")}}
           </div>
         </div>
         <div class="form-control">
@@ -51,9 +57,9 @@
                   <option value="{{ budget.id }}">{{ budget.name }}</option>
                 {% endfor %}
             {% endwith %}
-        </select>
+          </select>
         </div>
-        {{ expense_form.submit(class="btn btn-small") }}
+        {{ expense_form.expense_submit(class="btn btn-small") }}
       </form>
     </div>
     {% endif %}
@@ -94,7 +100,7 @@
         <th>Budget</th>
         <th></th>
       </tr>
-        {% for expense in user.expenses %}
+        {% for expense in current_user.expenses %}
           <tr>
             <td>{{ expense.name }}</td>
             <td>{{ "{:,.2f}".format(expense.amount) }}</td>

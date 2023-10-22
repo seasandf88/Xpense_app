@@ -1,0 +1,47 @@
+{% extends 'layout.html' %}
+
+
+{% block body %}
+
+<div class="container login">
+  <div class="forms-container">
+    <form action="/signup" method="post" class="form" novalidate>
+      <h3>Signup to <span class="highlight">X</span>pense</h3>
+      {{ form.hidden_tag() }}
+      <div class="form-control">
+        {{ form.name.label}}
+        {{ form.name(size=32, class="input") }}
+        {% for error in form.name.errors %}
+        <span class="form-error">{{ error }}</span>
+        {% endfor %}
+      </div>
+      <div class="form-control">
+        {{ form.username.label}}
+        {{ form.username(size=32, class="input", id="signup-username") }}
+        {% for error in form.username.errors %}
+        <span class="form-error">{{ error }}</span>
+        {% endfor %}
+      </div>
+      <div class="form-control">
+        {{ form.password.label}}
+        {{ form.password(size=32, class="input") }}
+        {% for error in form.password.errors %}
+        <span class="form-error">{{ error }}</span>
+        {% endfor %}
+      </div>
+      <div class="form-control">
+        {{ form.password_confirm.label}}
+        {{ form.password_confirm(size=32, class="input") }}
+        {% for error in form.password_confirm.errors %}
+        <span class="form-error">{{ error }}</span>
+        {% endfor %}
+      </div>
+      <div class="form-buttons">
+        {{ form.submit(class="btn btn-primary") }}
+      </div>
+    </form>
+    <p class="form-link">Already a user? <span class="link"><a href="/login">Click to Login</a></span></p>
+
+  </div>
+</div>
+{% endblock %}

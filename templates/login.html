@@ -1,0 +1,32 @@
+{% extends 'layout.html' %}
+
+<!--Script link-->
+
+<!--Body block-->
+{% block body %}
+<div class="container login">
+  <div class="forms-container">
+    <form action="/login" method="post" class="form" novalidate>
+      <h3>Login to <span class="highlight">X</span>pense</h3>
+      {{ form.hidden_tag() }}
+      <div class="form-control">
+        {{ form.username.label}} {{ form.username(size=32, class="input") }} {%
+        for error in form.username.errors %}
+        <span class="form-error">{{ error }}</span>
+        {% endfor %}
+      </div>
+      <div class="form-control">
+        {{ form.password.label}} {{ form.password(size=32, class="input") }} {%
+        for error in form.password.errors %}
+        <span class="form-error">{{ error }}</span>
+        {% endfor %}
+      </div>
+      <div class="form-buttons">{{ form.submit(class="btn btn-primary") }}</div>
+    </form>
+    <p class="form-link">
+      New User?
+      <span class="link"><a href="/signup">Click to Register</a></span>
+    </p>
+  </div>
+</div>
+{% endblock %}
