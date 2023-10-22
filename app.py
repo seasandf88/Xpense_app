@@ -61,28 +61,28 @@ def index():
     if current_user.is_authenticated:
         return redirect("/dashboard")
     quote = get_quote()
-    login_form = LoginForm()
-    signup_form = SignupForm()
     return render_template(
-        "/index.html", quote=quote, login_form=login_form, signup_form=signup_form
-    )
-
+        "/index.html", quote=quote)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    if current_user.is_authenticated:
+        return redirect("/dashboard")
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
+        user = User.query.filter_by(username=form.username.data.capitalize()).first()
         if user:
             if bcrypt.check_password_hash(user.password, form.password.data):
                 login_user(user)
-                flash("login successful")
+                flash("Login Successful")
                 return redirect("/dashboard")
     return render_template("/login.html", form=form)
 
 
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
+    if current_user.is_authenticated:
+        return redirect("/dashboard")
     form = SignupForm()
     if form.validate_on_submit():
         hashed_pw = bcrypt.generate_password_hash(form.password.data)
@@ -94,7 +94,7 @@ def signup():
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user)
-        flash("Signup successful")
+        flash("Signup Successful")
         return redirect("/dashboard")
     return render_template("/signup.html", form=form)
 
@@ -116,7 +116,7 @@ def dashboard():
 @login_required
 def logout():
     logout_user()
-    flash("Logout successful")
+    flash("Logout Successful")
     return redirect("/")
 
 
@@ -160,7 +160,6 @@ def new_expense():
         )
         budget.spent += new_expense.amount
         db.session.add(new_expense)
-        db.session.add(budget)
         db.session.commit()
         flash("Expense added")
         return redirect("/dashboard")
@@ -204,8 +203,8 @@ def delete_budget(name):
 @login_required
 def edit_budget():
     budget_id = int(request.form["budget_id"])
-    budget_form = BudgetForm()
     budget = Budget.query.get(budget_id)
+    budget_form = BudgetForm()
     if budget_form.validate_on_submit():
         budget.name = budget_form.name.data.capitalize()
         budget.amount = budget_form.amount.data
