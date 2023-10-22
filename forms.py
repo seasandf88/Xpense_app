@@ -1,8 +1,8 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, FloatField, SelectField
-from wtforms.validators import DataRequired, length, EqualTo
+from wtforms.validators import DataRequired, length, EqualTo, ValidationError
 
-
+from models import User
 
 class LoginForm(FlaskForm):
     username = StringField(
@@ -38,6 +38,14 @@ class SignupForm(FlaskForm):
     )
     submit = SubmitField("Signup")
 
+    def validate_username(self, username):
+        user = User.query.filter_by(username=username.data).first()
+        if user is not None:
+            
+            raise ValidationError('Please use a different username.')
+        
+
+
 class BudgetForm(FlaskForm):
     name = StringField(
         "Budget Name",
@@ -49,7 +57,7 @@ class BudgetForm(FlaskForm):
         validators=[DataRequired()],
         render_kw={"placeholder": "e.g. 100"},
     )
-    submit = SubmitField("Create")
+    submit = SubmitField("Create Budget")
 
     
 class ExpenseForm(FlaskForm):
@@ -63,4 +71,4 @@ class ExpenseForm(FlaskForm):
         validators=[DataRequired()],
         render_kw={"placeholder": "e.g. 10"},
     )
-    submit = SubmitField("Add")
+    submit = SubmitField("Add Expense")

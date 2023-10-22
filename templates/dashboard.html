@@ -3,7 +3,7 @@
 
 <!-- Head block-->
 {% block header %}
-<a href="/logout" class="btn">logout</a>
+<a href="/logout" ><button class="btn btn-small">logout</button></a>
 {% endblock %}
 
 <!-- Body block -->
@@ -13,27 +13,21 @@
   <div class="create">
     <div class="card budget">
       <h3 class="sub-subtitle">Create Budget</h3>
-      <form action="/new-budget" method="post" novalidate>
+      <form action="/new-budget" method="post">
         {{ budget_form.hidden_tag() }}
         <div class="form-control">
           {{ budget_form.name.label}}
           {{ budget_form.name(class="input")}}
-          {% for error in budget_form.name.errors %}
-            <p><span style="color: red;">[{{ error }}]</span></p>
-          {% endfor %}
         </div>
         <div class="form-control">
           {{ budget_form.amount.label}}
           {{ budget_form.amount(class="input")}}
-          {% for error in budget_form.amount.errors %}
-            <p><span style="color: red;">[{{ error }}]</span></p>
-          {% endfor %}
         </div>
         {{ budget_form.submit(class="btn btn-small") }}
       </form>
     </div>
+
     {% if current_user.budgets %}
-  
     <div class="card expense">
       <h3 class="sub-subtitle">Add Expense</h3>
       <form action="/new-expense" method="post">
@@ -63,8 +57,9 @@
       </form>
     </div>
     {% endif %}
-
   </div>
+
+  {% if current_user.budgets %}
   <h2 class="subtitle">Budgets</h2>
   <div class="budgets-container">
     {% for budget in current_user.budgets %}
@@ -78,14 +73,17 @@
       </div>
       <div class="row progress-text">
         <small>{{ budget.spent }} spent</small>
-        <small>{{ budget.amount - budget.spent }} remaining</small>
+        <small class="{% if budget.amount - budget.spent < 0 %}warn{% endif %}">{{ budget.amount - budget.spent }} remaining</small>
       </div>
       <div class="row">
-        <a href="#"><button class="btn btn-small {{ budget.color }}">details</button></a>
+        <a href="/budgets/{{ budget.name }}"><button class="btn btn-small {{ budget.color }}">details</button></a>
       </div>
     </div>
     {% endfor %}
   </div>
+  {% endif %}
+
+  {% if current_user.expenses %}
   <h2 class="subtitle">Expenses</h2>
   <table>
     <table>
@@ -94,18 +92,35 @@
         <th>Amount</th>
         <th>Date Added</th>
         <th>Budget</th>
+        <th></th>
       </tr>
-      {% for budget in current_user.budgets %}
-        {% for expense in budget.expenses %}
+        {% for expense in user.expenses %}
           <tr>
             <td>{{ expense.name }}</td>
-            <td>{{ expense.amount }}</td>
-            <td>{{ expense.date_added }}</td>
-            <td>{{ budget.name }}</td>
+            <td>{{ "{:,.2f}".format(expense.amount) }}</td>
+            <td>{{ moment(expense.date_added).calendar() }}</td>
+            <td><span class="budget-name {{ expense.budget.color }}"><a href="/budgets/{{ expense.budget.name }}">{{ expense.budget.name }}</a></span></td>
+            <td>
+              <form action="/delete-expense" method="post">
+                <input type="text" name="expense-id" id="" value="{{ expense.id }}" hidden />
+                <button class="delete-expense" type="submit">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="20"
+                    viewBox="0 -960 960 960"
+                    width="24"
+                    class="{{ expense.budget.color }}"
+                  >
+                    <path
+                      d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"
+                    />
+                  </svg>
+                </button>
+              </form>
+            </td>
           </tr>
-        {% endfor %}
       {% endfor %}
-
     </table>
+    {% endif %}
 </div>
 {% endblock %}

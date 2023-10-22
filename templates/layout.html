@@ -11,7 +11,9 @@
     />
     <link rel="stylesheet" href="../static/css/reset.css" />
     <link rel="stylesheet" href="../static/css/style.css" />
-    {% block script %}{% endblock %}
+    {% block script %}
+      {{ moment.include_moment() }}
+    {% endblock %}
     <title>{% block title %}{% endblock %}</title>
   </head>
   <body>
@@ -30,13 +32,13 @@
 
     <header>
       <div class="logo">
-        <h1><span class="highlight">X</span>spense</h1>
+        <a href="/"><span class="highlight">X</span>spense</a>
       </div>
       {% block header %}{% endblock %}
     </header>
     {% block body %}{% endblock %}
     <footer>
-      <img src="./static/images/footer_img.svg" alt="footer image" />
+      <img src="../static/images/footer_img.svg" alt="footer image" />
     </footer>
   </body>
 </html>

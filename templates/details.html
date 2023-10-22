@@ -1,0 +1,70 @@
+{% extends 'layout.html' %}
+
+
+<!-- Head block-->
+{% block header %}
+<a href="/logout" ><button class="btn btn-small">logout</button></a>
+{% endblock %}
+
+<!-- Body block -->
+{% block body %}
+<div class="container dashboard">
+  <h1 class="title"><span class="{{ budget.color }}">{{ budget.name }}</span> Overview</h1>
+  <div class="budgets-container">
+    <div class="budget-card {{ budget.color }}">
+      <div class="row">
+        <h3 class="sub-subtitle row-title {{ budget.color }}">{{ budget.name }}</h3>
+        <p class="amount {{ budget.color }}">{{ budget.amount }} Budgeted</p>
+      </div>
+      <div class="row {{ budget.color }}">
+        <progress max="{{ budget.amount }}" value="{{ budget.spent }}"></progress>
+      </div>
+      <div class="row progress-text">
+        <small>{{ budget.spent }} spent</small>
+        <small class="{% if budget.amount - budget.spent < 0 %}warn{% endif %}">{{ budget.amount - budget.spent }} remaining</small>
+      </div>
+      <div class="row">
+        <a href="/delete-budget/{{ budget.name }}"><button class="btn btn-small {{ budget.color }}">Delete Budget</button></a>
+      </div>
+    </div>
+  </div>
+
+  {% if budget.expenses %}
+  <h2 class="subtitle">Expenses</h2>
+  <table>
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>Amount</th>
+        <th>Date Added</th>
+        <th></th>
+      </tr>
+        {% for expense in budget.expenses %}
+          <tr>
+            <td>{{ expense.name }}</td>
+            <td>{{ "{:,.2f}".format(expense.amount) }}</td>
+            <td>{{ moment(expense.date_added).calendar() }}</td>
+            <td>
+              <form action="/{{ budget.name }}/delete-expense" method="post">
+                <input type="text" name="expense-id" id="" value="{{ expense.id }}" hidden />
+                <button class="delete-expense" type="submit">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="20"
+                    viewBox="0 -960 960 960"
+                    width="24"
+                    class="{{ budget.color }}"
+                  >
+                    <path
+                      d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"
+                    />
+                  </svg>
+                </button>
+              </form>
+            </td>
+          </tr>
+      {% endfor %}
+    </table>
+    {% endif %}
+</div>
+{% endblock %}

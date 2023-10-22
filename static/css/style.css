@@ -54,6 +54,14 @@ header {
   align-items: center;
 }
 
+a {
+  text-decoration: none;
+}
+
+a, a:visited, a:hover, a:active {
+  color: inherit;
+}
+
 footer {
   background-image: url(../images/footer_img.svg);
   background-repeat: no-repeat;
@@ -73,7 +81,7 @@ footer {
   padding: 0.625rem 1.25rem;
   font-size: 1rem;
   width: max-content;
-  color: white;
+  color: white !important;
   font-weight: 700;
   background-color: var(--text-color);
   border: none;
@@ -93,6 +101,10 @@ footer {
 .btn-small {
   padding: 0.5rem 1rem;
   font-size: 0.8rem;
+}
+
+.warn {
+  color: red !important;
 }
 
 .container.homepage {
@@ -119,7 +131,7 @@ footer {
 }
 
 .home-text .quote {
-  width: 45ch;
+  width: 40ch;
   color: var(--text-color-light);
   font-weight: 400;
   line-height: 1.2;
@@ -155,13 +167,13 @@ footer {
   text-align: center;
   padding: 1rem;
   background-color: #ccc;
-  color: #888;
+  color: #888 !important;
   transition: 0.2s;
 }
 
 .active-tab {
   background-color: white;
-  color: var(--text-color);
+  color: var(--text-color) !important;
   box-shadow: inset 0 -3px 0 var(--accent-color1);
 }
 
@@ -292,11 +304,11 @@ form h3 {
 }
 
 .card {
-  border-radius: 10px;
+  border-radius: 15px;
   padding: 1rem;
   margin-bottom: 1rem;
   position: relative;
-  border: 3px solid white;
+  border: 4px solid white;
 }
 
 .create .card::before {
@@ -333,8 +345,9 @@ form h3 {
 
 .budgets-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
 .budget-card {
@@ -386,21 +399,40 @@ progress::-webkit-progress-value {
 }
 
 table {
-  font-family: arial, sans-serif;
   border-collapse: collapse;
   width: 100%;
 }
 
+th {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
 td,
 th {
-  border: 1px solid #dddddd;
+  /* border: 1px solid #dddddd; */
   text-align: left;
-  padding: 8px;
+  padding: 1rem 0.5rem;
 }
 
 tr:nth-child(even) {
-  background-color: #dddddd;
+  background-color: #d4eaed;
 }
+
+.budget-name {
+  display: inline;
+  padding: .25rem .5rem;
+  border-radius: 1em;
+  color: white !important;
+  font-weight: 500;
+}
+
+.delete-expense {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
 
 .sub-subtitle.accent-1,
 .amount.accent-1 {
@@ -454,30 +486,66 @@ tr:nth-child(even) {
 }
 
 .row.accent-1 > progress::-webkit-progress-value,
-.btn-small.accent-1 {
+.btn-small.accent-1,
+.budget-name.accent-1 {
   background-color: var(--accent-color1);
 }
 .row.accent-2 > progress::-webkit-progress-value,
-.btn-small.accent-2 {
+.btn-small.accent-2,
+.budget-name.accent-2 {
   background-color: var(--accent-color2);
 }
 .row.accent-3 > progress::-webkit-progress-value,
-.btn-small.accent-3 {
+.btn-small.accent-3,
+.budget-name.accent-3 {
   background-color: var(--accent-color3);
 }
 .row.accent-4 > progress::-webkit-progress-value,
-.btn-small.accent-4 {
+.btn-small.accent-4,
+.budget-name.accent-4 {
   background-color: var(--accent-color4);
 }
 .row.accent-5 > progress::-webkit-progress-value,
-.btn-small.accent-5 {
+.btn-small.accent-5,
+.budget-name.accent-5 {
   background-color: var(--accent-color5);
 }
 .row.accent-6 > progress::-webkit-progress-value,
-.btn-small.accent-6 {
+.btn-small.accent-6,
+.budget-name.accent-6 {
   background-color: var(--accent-color6);
 }
 .row.accent-7 > progress::-webkit-progress-value,
-.btn-small.accent-7 {
+.btn-small.accent-7,
+.budget-name.accent-7 {
   background-color: var(--accent-color7);
+}
+
+.accent-1 {
+  fill: var(--accent-color1);
+  color: var(--accent-color1);
+}
+.accent-2 {
+  fill: var(--accent-color2);
+  color: var(--accent-color2);
+}
+.accent-3 {
+  fill: var(--accent-color3);
+  color: var(--accent-color3);
+}
+.accent-4 {
+  fill: var(--accent-color4);
+  color: var(--accent-color4);
+}
+.accent-5 {
+  fill: var(--accent-color5);
+  color: var(--accent-color5);
+}
+.accent-6 {
+  fill: var(--accent-color6);
+  color: var(--accent-color6);
+}
+.accent-7 {
+  fill: var(--accent-color7);
+  color: var(--accent-color7);
 }

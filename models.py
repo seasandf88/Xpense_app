@@ -13,6 +13,7 @@ class User(db.Model, UserMixin):
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
 
     budgets = db.relationship("Budget", backref="user")
+    expenses = db.relationship("Expense", backref="user")
 
     def __repr__(self):
         return "<name %r>" % self.name
@@ -25,8 +26,8 @@ class Budget(db.Model, UserMixin):
     amount = db.Column(db.Float, nullable=False)
     spent = db.Column(db.Float, nullable=False, default=0)
     color = db.Column(db.String(9), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
     expenses = db.relationship("Expense", backref="budget")
 
@@ -39,8 +40,9 @@ class Expense(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(25), nullable=False)
     amount = db.Column(db.Float, nullable=False)
-    budget_id = db.Column(db.Integer, db.ForeignKey("budget.id"))
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
+    budget_id = db.Column(db.Integer, db.ForeignKey("budget.id"))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
     def __repr__(self):
         return "<name %r>" % self.name

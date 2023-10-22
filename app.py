@@ -1,7 +1,9 @@
-from flask import Flask, render_template, redirect, flash, request
+from flask import Flask, render_template, redirect, flash, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql import func
 from flask_login import login_user, LoginManager, login_required, logout_user, current_user
 from flask_migrate import Migrate
+from flask_moment import Moment
 # from flask_wtf import FlaskForm
 # from wtforms import StringField, PasswordField, SubmitField
 # from wtforms.validators import InputRequired, length, ValidationError, EqualTo
@@ -21,6 +23,8 @@ bcrypt = Bcrypt(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+moment = Moment(app)
+
 app.config["SECRET_KEY"] = "HELLO"
 
 login_manager = LoginManager(app)
@@ -43,6 +47,7 @@ def unauthorized():
     return redirect("/")
 
 @app.route("/")
+@app.route("/index")
 def index():
     if current_user.is_authenticated:
         return redirect('/dashboard')
@@ -103,6 +108,7 @@ def logout():
     flash("Logout successful")
     return redirect("/")
 
+
 @app.route("/new-budget", methods=["POST"])
 @login_required
 def new_budget():
@@ -118,6 +124,7 @@ def new_budget():
     flash("Something went wrong")
     return redirect("/dashboard")
     
+
 @app.route("/new-expense", methods=["POST"])
 @login_required
 def new_expense():
@@ -126,16 +133,42 @@ def new_expense():
     budget = Budget.query.get(budget_id)
     spent = budget.spent
     if form.validate_on_submit():
-        if spent + form.amount.data > budget.amount:
-            flash("Insufficient budget")
-            return redirect("/dashboard")
-        new_expense = Expense(name=form.name.data.capitalize(), amount=form.amount.data, budget=budget)
+        new_expense = Expense(name=form.name.data.capitalize(), amount=form.amount.data, budget=budget, user=budget.user)
         budget.spent += new_expense.amount
         db.session.add(new_expense)
         db.session.add(budget)
         db.session.commit()
-        flash("Expense Created")
+        flash("Expense added")
         return redirect("/dashboard")
+    return redirect("/dashboard")
+
+@app.route("/delete-expense", methods=["POST"])
+@app.route("/<name>/delete-expense", methods=["POST"])
+@login_required
+def delete_expense(name = None):
+    expense_id = int(request.form["expense-id"])
+    expense = Expense.query.get(expense_id)
+    expense.budget.spent -= expense.amount
+    db.session.delete(expense)
+    db.session.commit()
+    if name:
+        return redirect(f"/budgets/{name}")
+    return redirect("/dashboard")
+
+
+@app.route("/budgets/<name>")
+@login_required
+def budget_details(name):
+    budget = Budget.query.filter_by(name=name).first()
+    return render_template("details.html", budget=budget)
+
+
+@app.route("/delete-budget/<name>")
+@login_required
+def delete_budget(name):
+    budget = Budget.query.filter_by(name=name).first()
+    db.session.delete(budget)
+    db.session.commit()
     return redirect("/dashboard")
 
 
