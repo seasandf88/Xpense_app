@@ -201,7 +201,7 @@ def edit_budget():
         budget.amount = budget_form.amount.data
         db.session.commit()
         return redirect(f"/budgets/{budget.name}")
-    return render_template("details.html", budget=budget, budget_form=budget_form)
+    return render_template("details.html", budget=budget, budget_form=budget_form, curr_f=currency_formatter)
 
 
 @app.route("/logout")
