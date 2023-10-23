@@ -39,18 +39,7 @@ from models import User, Budget, Expense
 from forms import LoginForm, SignupForm, BudgetForm, ExpenseForm
 
 
-# Routes:
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
-
-
-@login_manager.unauthorized_handler
-def unauthorized():
-    flash("Please login first")
-    return redirect("/")
-
-
+# Views:
 @app.route("/")
 @app.route("/index")
 def index():
@@ -110,6 +99,20 @@ def dashboard():
     )
 
 
+@app.route("/budgets/<name>")
+@login_required
+def budget_details(name):
+    budget_form = BudgetForm()
+    budget = Budget.query.filter_by(name=name).first_or_404()
+    return render_template(
+        "details.html",
+        budget=budget,
+        budget_form=budget_form,
+        curr_f=currency_formatter,
+    )
+
+
+# Utility routes
 @app.route("/new-budget", methods=["POST"])
 @login_required
 def new_budget():
@@ -132,6 +135,36 @@ def new_budget():
         current_user=current_user,
         budget_form=budget_form,
         expense_form=ExpenseForm(),
+        curr_f=currency_formatter,
+    )
+
+
+@app.route("/delete-budget/<name>")
+@login_required
+def delete_budget(name):
+    budget = Budget.query.filter_by(name=name).first()
+    for expense in budget.expenses:
+        db.session.delete(expense)
+    db.session.delete(budget)
+    db.session.commit()
+    return redirect("/dashboard")
+
+
+@app.route("/edit-budget", methods=["GET", "POST"])
+@login_required
+def edit_budget():
+    budget_id = int(request.form["budget_id"])
+    budget = Budget.query.get(budget_id)
+    budget_form = BudgetForm()
+    if budget_form.validate_on_submit():
+        budget.name = budget_form.name.data.capitalize()
+        budget.amount = budget_form.amount.data
+        db.session.commit()
+        return redirect(f"/budgets/{budget.name}")
+    return render_template(
+        "details.html",
+        budget=budget,
+        budget_form=budget_form,
         curr_f=currency_formatter,
     )
 
@@ -171,44 +204,24 @@ def delete_expense(name=None):
     return redirect("/dashboard")
 
 
-@app.route("/budgets/<name>")
-@login_required
-def budget_details(name):
-    budget_form = BudgetForm()
-    budget = Budget.query.filter_by(name=name).first_or_404()
-    return render_template("details.html", budget=budget, budget_form=budget_form, curr_f=currency_formatter)
-
-
-@app.route("/delete-budget/<name>")
-@login_required
-def delete_budget(name):
-    budget = Budget.query.filter_by(name=name).first()
-    for expense in budget.expenses:
-        db.session.delete(expense)
-    db.session.delete(budget)
-    db.session.commit()
-    return redirect("/dashboard")
-
-
-@app.route("/edit-budget", methods=["GET", "POST"])
-@login_required
-def edit_budget():
-    budget_id = int(request.form["budget_id"])
-    budget = Budget.query.get(budget_id)
-    budget_form = BudgetForm()
-    if budget_form.validate_on_submit():
-        budget.name = budget_form.name.data.capitalize()
-        budget.amount = budget_form.amount.data
-        db.session.commit()
-        return redirect(f"/budgets/{budget.name}")
-    return render_template("details.html", budget=budget, budget_form=budget_form, curr_f=currency_formatter)
-
-
 @app.route("/logout")
 @login_required
 def logout():
     logout_user()
     flash("Logout Successful")
+    return redirect("/")
+
+
+# Returns user id from session
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+
+# Redirect unauthorized attempts to the index page
+@login_manager.unauthorized_handler
+def unauthorized():
+    flash("Please login first")
     return redirect("/")
 
 
