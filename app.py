@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, flash, request, url_for
+from flask import Flask, render_template, redirect, flash, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import func
 from flask_login import (
@@ -10,21 +10,18 @@ from flask_login import (
 )
 from flask_migrate import Migrate
 from flask_moment import Moment
-
-# from flask_wtf import FlaskForm
-# from wtforms import StringField, PasswordField, SubmitField
-# from wtforms.validators import InputRequired, length, ValidationError, EqualTo
 from flask_bcrypt import Bcrypt
 import os, datetime, random
-from helpers import get_quote
+
+from helpers import get_quote, currency_formatter
 
 
 # Global variables:
 PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
-DATABASE = "sqlite:///" + os.path.join(PROJECT_ROOT, "instance", "database.db")
+DATABASE = "sqlite:///" + os.path.join(PROJECT_ROOT, "database.db")
 
 
-# App initiation:
+# App initiation and configuration:
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
@@ -35,7 +32,6 @@ moment = Moment(app)
 app.config["SECRET_KEY"] = "HELLO"
 
 login_manager = LoginManager(app)
-# login_manager.init_app(app)
 
 
 # Importing Forms and Models
@@ -61,8 +57,8 @@ def index():
     if current_user.is_authenticated:
         return redirect("/dashboard")
     quote = get_quote()
-    return render_template(
-        "/index.html", quote=quote)
+    return render_template("/index.html", quote=quote)
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -70,12 +66,13 @@ def login():
         return redirect("/dashboard")
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data.capitalize()).first()
-        if user:
-            if bcrypt.check_password_hash(user.password, form.password.data):
-                login_user(user)
-                flash("Login Successful")
-                return redirect("/dashboard")
+        user = User.query.filter_by(username=form.username.data.lower()).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user)
+            flash("Login Successful")
+            return redirect("/dashboard")
+        else:
+            flash("Wrong Username of Password")
     return render_template("/login.html", form=form)
 
 
@@ -88,7 +85,7 @@ def signup():
         hashed_pw = bcrypt.generate_password_hash(form.password.data)
         new_user = User(
             name=form.name.data.capitalize(),
-            username=form.username.data,
+            username=form.username.data.lower(),
             password=hashed_pw,
         )
         db.session.add(new_user)
@@ -99,7 +96,7 @@ def signup():
     return render_template("/signup.html", form=form)
 
 
-@app.route("/dashboard", methods=["GET", "POST"])
+@app.route("/dashboard", methods=["GET"])
 @login_required
 def dashboard():
     budget_form = BudgetForm()
@@ -109,15 +106,8 @@ def dashboard():
         current_user=current_user,
         budget_form=budget_form,
         expense_form=expense_form,
+        curr_f=currency_formatter,
     )
-
-
-@app.route("/logout")
-@login_required
-def logout():
-    logout_user()
-    flash("Logout Successful")
-    return redirect("/")
 
 
 @app.route("/new-budget", methods=["POST"])
@@ -142,6 +132,7 @@ def new_budget():
         current_user=current_user,
         budget_form=budget_form,
         expense_form=ExpenseForm(),
+        curr_f=currency_formatter,
     )
 
 
@@ -185,7 +176,7 @@ def delete_expense(name=None):
 def budget_details(name):
     budget_form = BudgetForm()
     budget = Budget.query.filter_by(name=name).first_or_404()
-    return render_template("details.html", budget=budget, budget_form=budget_form)
+    return render_template("details.html", budget=budget, budget_form=budget_form, curr_f=currency_formatter)
 
 
 @app.route("/delete-budget/<name>")
@@ -213,8 +204,24 @@ def edit_budget():
     return render_template("details.html", budget=budget, budget_form=budget_form)
 
 
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    flash("Logout Successful")
+    return redirect("/")
+
 
 # Creates shell context
 @app.shell_context_processor
 def make_shell_context():
     return {"db": db, "User": User, "Budget": Budget, "Expense": Expense}
+
+
+# Temp admin route to clear the database
+@app.route("/clear")
+def clear():
+    with app.app_context():
+        db.drop_all()
+        db.create_all()
+    return redirect("/")

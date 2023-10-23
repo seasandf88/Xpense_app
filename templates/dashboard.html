@@ -9,7 +9,7 @@
 <!-- Body block -->
 {% block body %}
 <div class="container dashboard">
-  <h1 class="title">Welcome back, <span class="highlight">{{ current_user.name }}</span></h1>
+  <h1 class="title">Welcome, <span class="highlight">{{ current_user.name }}</span></h1>
   <div class="create">
     <div class="card budget">
       <h3 class="sub-subtitle">Create Budget</h3>
@@ -17,14 +17,14 @@
         {{ budget_form.hidden_tag() }}
         <div class="form-control">
           {{ budget_form.name.label}}
-          {{ budget_form.name(class="input")}}
+          {{ budget_form.name(class="input", size=20)}}
           {% for error in budget_form.name.errors %}
           <span class="form-error">{{ error }}</span>
           {% endfor %}
         </div>
         <div class="form-control">
           {{ budget_form.amount.label}}
-          {{ budget_form.amount(class="input")}}
+          {{ budget_form.amount(class="input", size=20)}}
           {% for error in budget_form.amount.errors %}
           <span class="form-error">{{ error }}</span>
           {% endfor %}
@@ -41,11 +41,11 @@
         <div class="expense-wrapper">
           <div class="form-control">
             {{ expense_form.expense_name.label}}
-            {{ expense_form.expense_name(class="input")}}
+            {{ expense_form.expense_name(class="input", size=20)}}
           </div>
           <div class="form-control">
             {{ expense_form.expense_amount.label}}
-            {{ expense_form.expense_amount(class="input")}}
+            {{ expense_form.expense_amount(class="input", size=20)}}
           </div>
         </div>
         <div class="form-control">
@@ -72,14 +72,18 @@
     <div class="budget-card {{ budget.color }}">
       <div class="row">
         <h3 class="sub-subtitle row-title {{ budget.color }}">{{ budget.name }}</h3>
-        <p class="amount {{ budget.color }}">{{ budget.amount }} Budgeted</p>
+        <p class="amount {{ budget.color }}">{{ curr_f(budget.amount) }} Budgeted</p>
       </div>
       <div class="row {{ budget.color }}">
         <progress max="{{ budget.amount }}" value="{{ budget.spent }}"></progress>
       </div>
       <div class="row progress-text">
-        <small>{{ budget.spent }} spent</small>
-        <small class="{% if budget.amount - budget.spent < 0 %}warn{% endif %}">{{ budget.amount - budget.spent }} remaining</small>
+        <small>{{ curr_f(budget.spent) }} spent</small>
+        {% if budget.amount - budget.spent < 0 %}
+        <small class="warn">{{  curr_f(budget.spent - budget.amount) }} overbudget</small>
+        {% else %}
+        <small>{{ curr_f(budget.amount - budget.spent) }} remaining</small>
+        {% endif %}
       </div>
       <div class="row">
         <a href="/budgets/{{ budget.name }}"><button class="btn btn-small {{ budget.color }}">details</button></a>
@@ -103,7 +107,7 @@
         {% for expense in current_user.expenses %}
           <tr>
             <td>{{ expense.name }}</td>
-            <td>{{ "{:,.2f}".format(expense.amount) }}</td>
+            <td>{{ curr_f(expense.amount) }}</td>
             <td>{{ moment(expense.date_added).calendar() }}</td>
             <td><span class="budget-name {{ expense.budget.color }}"><a href="/budgets/{{ expense.budget.name }}">{{ expense.budget.name }}</a></span></td>
             <td>

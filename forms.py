@@ -2,6 +2,7 @@ from flask import flash
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, FloatField
 from wtforms.validators import InputRequired, length, EqualTo, ValidationError, Regexp
+from flask_login import current_user
 
 from models import User, Budget
 
@@ -22,7 +23,12 @@ class SignupForm(FlaskForm):
         render_kw={"placeholder": "e.g. John"},
     )
     username = StringField(
-        validators=[InputRequired(), length(min=3, max=20)],
+        validators=[
+            InputRequired(),
+            length(min=3, max=20),
+            Regexp("^[a-zA-Z0-9]*$",
+            message="Username should not contain whitespaces or special characters.")
+        ],
         render_kw={"placeholder": "Username"},
     )
     password = PasswordField(
@@ -40,7 +46,7 @@ class SignupForm(FlaskForm):
     submit = SubmitField("Signup")
 
     def validate_username(self, username):
-        user = User.query.filter_by(username=username.data.capitalize()).first()
+        user = User.query.filter_by(username=username.data.lower()).first()
         if user is not None:
             raise ValidationError('Please use a different username.')
         
@@ -50,17 +56,17 @@ class BudgetForm(FlaskForm):
     name = StringField(
         "Budget Name",
         validators=[InputRequired(), length(min=3, max=20)],
-        render_kw={"placeholder": "e.g. Groceries"},
+        render_kw={"placeholder": "e.g., Groceries"},
     )
     amount = FloatField(
         "Amount",
         validators=[InputRequired()],
-        render_kw={"placeholder": "e.g. 100"},
+        render_kw={"placeholder": "e.g., 100"},
     )
     submit = SubmitField("Create Budget")
 
     def validate_name(self, name):
-        budget = Budget.query.filter_by(name=name.data.capitalize()).first()
+        budget = Budget.query.filter_by(user_id=current_user.id).filter_by(name=name.data.capitalize()).first()
         if budget is not None:
             raise ValidationError('Budget already exists.')
 

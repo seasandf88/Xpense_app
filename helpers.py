@@ -6,10 +6,12 @@ def read_json():
         file_content = json.load(file)
     return file_content
 
-
+# Returns quote randomly
 def get_quote():
     quotes = read_json()
     random_number = random.randint(0, len(quotes) - 1)
     return quotes[random_number]
 
-
+# Currency formatter
+def currency_formatter(number):
+    return "{:,.2f}".format(number)

@@ -9,15 +9,26 @@
       href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&family=Source+Sans+3:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500&display=swap"
       rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+      integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
     <link rel="stylesheet" href="../static/css/reset.css" />
     <link rel="stylesheet" href="../static/css/style.css" />
-    {% block script %}
-      {{ moment.include_moment() }}
-    {% endblock %}
+    <link rel="stylesheet" href="../static/css/switch.css" />
+    {% block script %} {{ moment.include_moment() }} {% endblock %}
+    <script src="../static/javascript/switch.js" defer></script>
+
     <title>{% block title %}{% endblock %}</title>
   </head>
   <body>
-    
+    <script>
+      const selectedTheme = localStorage.getItem("selected-theme");
+      document.body.classList[selectedTheme === "dark" ? "add" : "remove"]("dark")
+    </script>
     <!-- Flask messages -->
     {% with messages = get_flashed_messages() %}
     <!---->
@@ -34,11 +45,36 @@
       <div class="logo">
         <a href="/"><span class="highlight">X</span>spense</a>
       </div>
-      {% block header %}{% endblock %}
+
+      <div class="header-buttons">
+        <div>
+          <input type="checkbox" class="checkbox" id="checkbox" />
+          <label for="checkbox" class="checkbox-label">
+            <i class="fas fa-moon"></i>
+            <i class="fas fa-sun"></i>
+            <span class="ball"></span>
+          </label>
+        </div>
+        {% block header %}{% endblock %}
+      </div>
     </header>
     {% block body %}{% endblock %}
+
     <footer>
-      <img src="../static/images/footer_img.svg" alt="footer image" />
+      <svg
+        class="footer-svg"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 1366 90"
+      >
+        <defs></defs>
+        <g id="Layer_2" data-name="Layer 2">
+          <g id="Layer_1-2" data-name="Layer 1">
+            <path
+              d="M0,31.43C237.21-15.3,518.77,62.12,645.44,64.7,849,68.85,956.86-42.3,1366,17.93V126.3H0Z"
+            />
+          </g>
+        </g>
+      </svg>
     </footer>
   </body>
 </html>
