@@ -1,5 +1,7 @@
 # Xpense App
 
+## [Live Demo](https://xpense-3re8.onrender.com/)
+![Preview](./design_files/Preview.png)
 ## Project Idea:
 Personal finance management tool that helps users manage their money by keeping track of their expenses.
 
@@ -20,11 +22,14 @@ The app allows users to set up a budget for different categories such as rent, g
 4. Show a table with history of every item the user has added.
 5. Landing page will have a quote that gets fetched from a local json file.
 6. Users can delete entries.
-6. Users can delete their profile.
 
-## Prototype Design:
-
-![Preview](./design_files/Landing_Page.jpg)
-![Preview](./design_files/Login.jpg)
-![Preview](./design_files/Signup.jpg)
-![Preview](./design_files/Dashboard.jpg)
+## How to run:
+1. Install Python (https://www.python.org/downloads/)
+2. Install dependencies, open the terminal in the project folder and run:
+ ```python
+  pip install -r requirements.txt
+  ```
+3. Then run the app with:
+```python
+flask run
+```
