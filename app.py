@@ -11,7 +11,7 @@ from flask_login import (
 from flask_migrate import Migrate
 from flask_moment import Moment
 from flask_bcrypt import Bcrypt
-import os, datetime, random
+import os, random
 
 from helpers import get_quote, currency_formatter
 
@@ -61,7 +61,7 @@ def login():
             flash("Login Successful")
             return redirect("/dashboard")
         else:
-            flash("Wrong Username of Password")
+            flash("Wrong Username or Password")
     return render_template("/login.html", form=form)
 
 
