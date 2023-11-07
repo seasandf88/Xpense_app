@@ -35,13 +35,13 @@ class SignupForm(FlaskForm):
         validators=[
             InputRequired(),
             length(min=4, max=20),
-            EqualTo("password_confirm", message="Passwords must match"),
+            EqualTo("password_confirmation", message="Passwords must match"),
         ],
         render_kw={"placeholder": "Password"},
     )
-    password_confirm = PasswordField(
+    password_confirmation = PasswordField(
         validators=[InputRequired(), length(min=4, max=20)],
-        render_kw={"placeholder": "Password"},
+        render_kw={"placeholder": "Password "},
     )
     submit = SubmitField("Signup")
 

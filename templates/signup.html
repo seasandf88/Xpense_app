@@ -31,9 +31,9 @@
         {% endfor %}
       </div>
       <div class="form-control">
-        {{ form.password_confirm.label}}
-        {{ form.password_confirm(size=32, class="input") }}
-        {% for error in form.password_confirm.errors %}
+        {{ form.password_confirmation.label}}
+        {{ form.password_confirmation(size=32, class="input") }}
+        {% for error in form.password_confirmation.errors %}
         <span class="form-error">{{ error }}</span>
         {% endfor %}
       </div>

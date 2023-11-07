@@ -1,6 +1,5 @@
 from flask import Flask, render_template, redirect, flash, request
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.sql import func
 from flask_login import (
     login_user,
     LoginManager,
@@ -8,17 +7,16 @@ from flask_login import (
     logout_user,
     current_user,
 )
-from flask_migrate import Migrate
 from flask_moment import Moment
 from flask_bcrypt import Bcrypt
-import os, random
+import random
 
 from helpers import get_quote, currency_formatter
 
 
 # Global variables:
-PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
-DATABASE = "sqlite:///" + os.path.join(PROJECT_ROOT, "database.db")
+# PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
+# DATABASE = "sqlite:///" + os.path.join(PROJECT_ROOT, "database.db")
 
 
 # App initiation and configuration:
@@ -26,7 +24,6 @@ app = Flask(__name__)
 bcrypt = Bcrypt(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 db = SQLAlchemy(app)
-migrate = Migrate(app, db)
 moment = Moment(app)
 
 app.config["SECRET_KEY"] = "HELLO"
@@ -103,7 +100,7 @@ def dashboard():
 @login_required
 def budget_details(name):
     budget_form = BudgetForm()
-    budget = Budget.query.filter_by(name=name).first_or_404()
+    budget = Budget.query.filter_by(user_id=current_user.id).filter_by(name=name).first_or_404()
     return render_template(
         "details.html",
         budget=budget,
@@ -142,7 +139,7 @@ def new_budget():
 @app.route("/delete-budget/<name>")
 @login_required
 def delete_budget(name):
-    budget = Budget.query.filter_by(name=name).first()
+    budget = Budget.query.filter_by(user_id=current_user.id).filter_by(name=name).first()
     for expense in budget.expenses:
         db.session.delete(expense)
     db.session.delete(budget)
@@ -223,12 +220,6 @@ def load_user(user_id):
 def unauthorized():
     flash("Please login first")
     return redirect("/")
-
-
-# Creates shell context
-@app.shell_context_processor
-def make_shell_context():
-    return {"db": db, "User": User, "Budget": Budget, "Expense": Expense}
 
 
 # Temp admin route to clear the database
