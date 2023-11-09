@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, flash, request, jsonify
+from flask import Flask, render_template, redirect, flash, request, jsonify, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import (
     login_user,
@@ -244,11 +244,17 @@ def change_password():
     )
 
 
-@app.route("/delete-user")
+@app.route("/delete-user", methods=["POST"])
 @login_required
 def delete_user():
-    
-    return
+    for budget in current_user.budgets:
+        db.session.delete(budget)
+    for expense in current_user.expenses:
+        db.session.delete(expense)
+    db.session.delete(current_user)
+    db.session.commit()
+    logout_user()
+    return redirect(url_for("index"))
 
 
 # Returns user id from session
