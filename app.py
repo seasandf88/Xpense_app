@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, flash, request
+from flask import Flask, render_template, redirect, flash, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import (
     login_user,
@@ -33,7 +33,7 @@ login_manager = LoginManager(app)
 
 # Importing Forms and Models
 from models import User, Budget, Expense
-from forms import LoginForm, SignupForm, BudgetForm, ExpenseForm
+from forms import LoginForm, SignupForm, BudgetForm, ExpenseForm, ChangePassword
 
 
 # Views:
@@ -106,6 +106,16 @@ def budget_details(name):
         budget=budget,
         budget_form=budget_form,
         curr_f=currency_formatter,
+    )
+
+
+@app.route("/account")
+@login_required
+def account():
+    form = ChangePassword()
+    return render_template(
+        "account.html",
+        form=form
     )
 
 
@@ -207,6 +217,38 @@ def logout():
     logout_user()
     flash("Logout Successful")
     return redirect("/")
+
+
+@app.route("/duplicate-user/<user_name>")
+def duplicate(user_name):
+    user = User.query.filter_by(username=user_name).first()
+    print(user)
+    if user:
+        return jsonify("true")
+    return jsonify("false")
+
+
+@app.route("/change-password", methods=["POST"])
+@login_required
+def change_password():
+    form = ChangePassword()
+    if form.validate_on_submit():
+        hashed_pw = bcrypt.generate_password_hash(form.password.data)
+        current_user.password = hashed_pw
+        db.session.commit()
+        flash("Password changed successfully")
+        return redirect("/account")
+    return render_template(
+        "account.html",
+        form=form
+    )
+
+
+@app.route("/delete-user")
+@login_required
+def delete_user():
+    
+    return
 
 
 # Returns user id from session

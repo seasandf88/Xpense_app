@@ -50,6 +50,20 @@ class SignupForm(FlaskForm):
         if user is not None:
             raise ValidationError('Please use a different username.')
         
+class ChangePassword(FlaskForm):
+    password = PasswordField(
+        validators=[
+            InputRequired(),
+            length(min=4, max=20),
+            EqualTo("password_confirmation", message="Passwords must match"),
+        ],
+        render_kw={"placeholder": "Password"},
+    )
+    password_confirmation = PasswordField(
+        validators=[InputRequired(), length(min=4, max=20)],
+        render_kw={"placeholder": "Confirm Password "},
+    )
+    submit = SubmitField("Change Password")
 
 
 class BudgetForm(FlaskForm):

@@ -1,8 +1,6 @@
-{% extends 'layout.html' %}
-
-{% block title %}Signup{% endblock %}
-
-{% block body %}
+{% extends 'layout.html' %} {% block script %}
+<script src="../static/javascript/script.js" defer></script>
+{% endblock %} {% block title %}Signup{% endblock %} {% block body %}
 
 <div class="container login">
   <div class="forms-container">
@@ -10,39 +8,62 @@
       <h3>Signup to <span class="highlight">X</span>pense</h3>
       {{ form.hidden_tag() }}
       <div class="form-control">
-        {{ form.name.label}}
-        {{ form.name(size=32, class="input") }}
-        {% for error in form.name.errors %}
+        {{ form.name.label}} {{ form.name(size=32, class="input") }} {% for
+        error in form.name.errors %}
         <span class="form-error">{{ error }}</span>
         {% endfor %}
       </div>
       <div class="form-control">
-        {{ form.username.label}}
-        {{ form.username(size=32, class="input", id="signup-username") }}
+        {{ form.username.label}} {{ form.username(size=32, class="input",
+        id="signup-username") }}
+        <div class="loading hidden">
+          <svg
+            width="1.2rem"
+            height="1.2rem"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <style>
+              .spinner_P7sC {
+                transform-origin: center;
+                animation: spinner_svv2 0.75s infinite linear;
+              }
+              @keyframes spinner_svv2 {
+                100% {
+                  transform: rotate(360deg);
+                }
+              }
+            </style>
+            <path
+              d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z"
+              class="spinner_P7sC"
+            />
+          </svg>
+        </div>
+        <p class="form-error" id="dup-username"></p>
         {% for error in form.username.errors %}
         <span class="form-error">{{ error }}</span>
         {% endfor %}
       </div>
       <div class="form-control">
-        {{ form.password.label}}
-        {{ form.password(size=32, class="input") }}
-        {% for error in form.password.errors %}
+        {{ form.password.label}} {{ form.password(size=32, class="input") }} {%
+        for error in form.password.errors %}
         <span class="form-error">{{ error }}</span>
         {% endfor %}
       </div>
       <div class="form-control">
-        {{ form.password_confirmation.label}}
-        {{ form.password_confirmation(size=32, class="input") }}
-        {% for error in form.password_confirmation.errors %}
+        {{ form.password_confirmation.label}} {{
+        form.password_confirmation(size=32, class="input") }} {% for error in
+        form.password_confirmation.errors %}
         <span class="form-error">{{ error }}</span>
         {% endfor %}
       </div>
-      <div class="form-buttons">
-        {{ form.submit(class="btn btn-primary") }}
-      </div>
+      <div class="form-buttons">{{ form.submit(class="btn btn-primary") }}</div>
     </form>
-    <p class="form-link">Already a user? <span class="link"><a href="/login">Click to Login</a></span></p>
-
+    <p class="form-link">
+      Already a user?
+      <span class="link"><a href="/login">Click to Login</a></span>
+    </p>
   </div>
 </div>
 {% endblock %}

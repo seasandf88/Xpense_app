@@ -4,6 +4,7 @@
 
 <!-- Head block-->
 {% block header %}
+<a href="/account" ><button class="btn btn-secondary btn-small">Account</button></a>
 <a href="/logout" ><button class="btn btn-small">logout</button></a>
 {% endblock %}
 
@@ -96,8 +97,7 @@
 
   {% if current_user.expenses %}
   <h2 class="subtitle">Expenses</h2>
-  <table>
-    <table>
+  <table class="expenses">
       <tr>
         <th>Name</th>
         <th>Amount</th>
