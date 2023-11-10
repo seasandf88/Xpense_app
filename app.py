@@ -244,7 +244,7 @@ def change_password():
     )
 
 
-@app.route("/delete-user", methods=["POST"])
+@app.route("/delete_user", methods=['POST'])
 @login_required
 def delete_user():
     for budget in current_user.budgets:

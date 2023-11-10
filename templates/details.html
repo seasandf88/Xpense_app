@@ -65,7 +65,7 @@
         <th>Date Added</th>
         <th></th>
       </tr>
-        {% for expense in budget.expenses %}
+        {% for expense in budget.expenses|reverse %}
           <tr>
             <td>{{ expense.name }}</td>
             <td>{{ curr_f(expense.amount) }}</td>

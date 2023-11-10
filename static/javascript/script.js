@@ -17,7 +17,7 @@ function handleCheck() {
         .then((res) => res.json())
         .then((data) => {
           if (data === "true") {
-            dupError.textContent = "Please choose different username";
+            dupError.textContent = "Please use a different username";
           }
           spinner.classList.add("hidden");
         });

@@ -13,11 +13,9 @@ cancelDialog.addEventListener("click", (e) => {
 });
 
 confirmDialog.addEventListener("click", () => {
-  fetch("/delete-user", {
+  fetch("/delete_user", {
     method: "POST",
-  }).then(() => {
-    // window.location.pathname("/")
-    // window.location.assign("/")
-    console.log("hello")
+  }).then((res) => {
+    window.location.href = res.url
   });
 });
