@@ -254,6 +254,7 @@ def delete_user():
     db.session.delete(current_user)
     db.session.commit()
     logout_user()
+    flash("Account deleted successfully")
     return redirect(url_for("index"))
 
 

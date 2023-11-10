@@ -69,7 +69,7 @@ class ChangePassword(FlaskForm):
 class BudgetForm(FlaskForm):
     name = StringField(
         "Budget Name",
-        validators=[InputRequired(), length(min=3, max=20)],
+        validators=[InputRequired(), length(min=3, max=13)],
         render_kw={"placeholder": "e.g., Groceries"},
     )
     amount = FloatField(
@@ -88,7 +88,7 @@ class BudgetForm(FlaskForm):
 class ExpenseForm(FlaskForm):
     expense_name = StringField(
         "Expense Name",
-        validators=[InputRequired(), length(min=3, max=20)],
+        validators=[InputRequired(), length(min=3, max=12)],
         render_kw={"placeholder": "e.g. Bananas"},
     )
     expense_amount = FloatField(
