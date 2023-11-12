@@ -17,3 +17,4 @@ typing_extensions==4.7.1
 Werkzeug==2.2.3
 WTForms==3.0.1
 gunicorn==19.7.1
+waitress
