@@ -1,6 +1,3 @@
 .vscode/
 sandbox/
 __pycache__/
-Dockerfile
-.dockerignore
-compose.yaml

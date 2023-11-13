@@ -24,6 +24,7 @@ The app allows users to set up a budget for different categories such as rent, g
 6. Users can delete entries.
 
 ## How to run:
+### Using Flask Run:
 1. Install Python (https://www.python.org/downloads/)
 2. Install dependencies, open the terminal in the project folder and run:
  ```python
@@ -33,3 +34,14 @@ The app allows users to set up a budget for different categories such as rent, g
 ```python
 flask run
 ```
+4. Open a new webpage with this address (http://127.0.0.1:5000)
+
+### Using Docker:
+1. Install Docker (https://www.docker.com/products/docker-desktop/)
+2. Open terminal in the project folder and run:
+```python
+docker compose up --build # Only for the first run
+docker compose up # For subsequent runs
+```
+4. Open a new webpage with this address (http://127.0.0.1:8000)
+
