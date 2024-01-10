@@ -1,4 +1,12 @@
-from flask import Flask, render_template, redirect, flash, request, jsonify, url_for
+from flask import (
+    Flask,
+    render_template,
+    redirect,
+    flash,
+    request,
+    jsonify,
+    url_for,
+)
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import (
     login_user,
@@ -14,10 +22,6 @@ import random
 from helpers import get_quote, currency_formatter
 
 
-# Global variables:
-# PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
-# DATABASE = "sqlite:///" + os.path.join(PROJECT_ROOT, "database.db")
-
 
 # App initiation and configuration:
 app = Flask(__name__)
@@ -29,11 +33,15 @@ moment = Moment(app)
 app.config["SECRET_KEY"] = "HELLO"
 
 login_manager = LoginManager(app)
-
-
 # Importing Forms and Models
 from models import User, Budget, Expense
-from forms import LoginForm, SignupForm, BudgetForm, ExpenseForm, ChangePassword
+from forms import (
+    LoginForm,
+    SignupForm,
+    BudgetForm,
+    ExpenseForm,
+    ChangePassword,
+)
 
 
 # Views:
@@ -100,7 +108,11 @@ def dashboard():
 @login_required
 def budget_details(name):
     budget_form = BudgetForm()
-    budget = Budget.query.filter_by(user_id=current_user.id).filter_by(name=name).first_or_404()
+    budget = (
+        Budget.query.filter_by(user_id=current_user.id)
+        .filter_by(name=name)
+        .first_or_404()
+    )
     return render_template(
         "details.html",
         budget=budget,
@@ -113,10 +125,7 @@ def budget_details(name):
 @login_required
 def account():
     form = ChangePassword()
-    return render_template(
-        "account.html",
-        form=form
-    )
+    return render_template("account.html", form=form)
 
 
 # Utility routes
@@ -149,7 +158,10 @@ def new_budget():
 @app.route("/delete-budget/<name>")
 @login_required
 def delete_budget(name):
-    budget = Budget.query.filter_by(user_id=current_user.id).filter_by(name=name).first()
+    budget = (
+        Budget.query.filter_by(user_id=current_user.id)
+        .filter_by(name=name).first()
+    )
     for expense in budget.expenses:
         db.session.delete(expense)
     db.session.delete(budget)
@@ -238,13 +250,10 @@ def change_password():
         db.session.commit()
         flash("Password changed successfully")
         return redirect("/account")
-    return render_template(
-        "account.html",
-        form=form
-    )
+    return render_template("account.html", form=form)
 
 
-@app.route("/delete_user", methods=['POST'])
+@app.route("/delete_user", methods=["POST"])
 @login_required
 def delete_user():
     for budget in current_user.budgets:
